@@ -85,6 +85,9 @@ def cached(
                     pass  # val too large
 
                 return val
+            async def cache_clear():
+                async with lock:
+                    cache.clear()
 
         else:
 
@@ -107,7 +110,12 @@ def cached(
                     pass  # val too large
 
                 return val
-
+            def cache_clear():
+                with lock:
+                    cache.clear()
+        wrapper.cache = cache
+        wrapper.cache_clear = cache_clear
+        wrapper.cache_key = key
         return functools.wraps(func)(wrapper)
 
     return decorator
@@ -153,7 +161,11 @@ def cachedmethod(
                     pass  # val too large
 
                 return val
-
+            async def clear(self):
+                c = cache(self)
+                if c is not None:
+                    async with lock(self):
+                        c.clear()
         else:
 
             def wrapper(self, *args, **kwargs):
@@ -179,7 +191,15 @@ def cachedmethod(
                     pass  # val too large
 
                 return val
+            def clear(self):
+                c = cache(self)
+                if c is not None:
+                    with lock(self):
+                        c.clear()
 
+        wrapper.cache = cache
+        wrapper.cache_clear = clear
+        wrapper.cache_key = key
         return functools.wraps(method)(wrapper)
 
     return decorator
