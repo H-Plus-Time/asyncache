@@ -116,6 +116,7 @@ def cached(
         wrapper.cache = cache
         wrapper.cache_clear = cache_clear
         wrapper.cache_key = key
+        wrapper.cache_lock = lock
         return functools.wraps(func)(wrapper)
 
     return decorator
@@ -200,6 +201,7 @@ def cachedmethod(
         wrapper.cache = cache
         wrapper.cache_clear = clear
         wrapper.cache_key = key
+        wrapper.cache_lock = lock
         return functools.wraps(method)(wrapper)
 
     return decorator
